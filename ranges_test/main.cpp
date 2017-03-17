@@ -99,7 +99,8 @@ void view_delimit()
 void view_drop()
 {
 	func_name;
-	auto rng = view::iota(0, 50) | view::drop(30); // [30..50)
+	//          [0..50)       --->   [30..50)
+	auto rng = view::iota(0, 50) | view::drop(30);
 	std::cout << rng;
 }
 
@@ -109,11 +110,54 @@ void view_drop()
 void view_drop_exactly()
 {
 	func_name;
+	//          [0..50)       --->   [40..50)
+	auto rng = view::iota(0, 50) | view::drop_exactly(40);
+	std::cout << rng;
+}
 
+#include <range/v3/view/drop_while.hpp>
+// Remove elements from the front of a range that satisfy a unary predicate (until it's true).
+void view_drop_while()
+{
+	func_name;
+	//          [0..50)       --->   [20..50)
+	auto rng = view::iota(0, 50) | view::drop_while([](int i)
+	{
+		return i < 20;
+	});
+	std::cout << rng;
+}
+
+#include <range/v3/view/generate.hpp>
+// Given a nullary function, return an infinite range whose elements are generated with the function.
+void view_generate()
+{
+	func_name;
+	auto rng = view::generate([]  // [1..inf)
+	{
+		static int i = 0;
+		return ++i;
+	}) | view::take(20); // [1..20]
+	std::cout << rng;
+}
+
+#include <range/v3/view/generate_n.hpp>
+// Given a nullary function and a count, return a range that generates the requested number of elements
+// by calling the function.
+void view_generate_n()
+{
+	func_name;
+	auto rng = view::generate_n([]
+	{
+		static int i = 0;
+		return ++i;
+	}, 20); // [1..20]
+	std::cout << rng;
 }
 
 
-std::vector<void (*)(void)> funcs = {view_all, view_concat, view_chunk, view_counted, view_delimit, view_drop};
+std::vector<void (*)(void)> funcs = {view_all, view_concat, view_chunk, view_counted, view_delimit, view_drop, view_drop_exactly,
+									view_drop_while, view_generate, view_generate_n};
 
 int main()
 {
